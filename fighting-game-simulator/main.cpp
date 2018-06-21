@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cctype>
+#include <cstdlib>
 
 #if _WIN32
 #include <Windows.h>
