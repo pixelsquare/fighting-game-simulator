@@ -18,7 +18,11 @@ int main(int argc, char *argv[])
 
     while (true)
     {
+#if _WIN32
+        system("cls");
+#else
         system("clear");
+#endif
 
         std::cout << "###############################" << std::endl;
         std::cout << "Welcome to Fighting Game Simulator!" << std::endl;
@@ -26,7 +30,7 @@ int main(int argc, char *argv[])
         std::cout << std::endl;
 
         std::cout << "[Controls]" << std::endl;
-        std::cout << "   W, A, S, D, X" << std::endl;
+        std::cout << "   W, A, S, D, X, Q" << std::endl;
         std::cout << std::endl;
 
         int comboLen = sizeof(comboMove) / sizeof(comboMove[0]);
@@ -75,7 +79,7 @@ bool isKeysValid(char keys[], int size)
     {
         char key = keys[i];
 
-        if (key != 'w' && key != 'a' && key != 's' && key != 'd' && key != 'x')
+        if (key != 'w' && key != 'a' && key != 's' && key != 'd' && key != 'x' && key != 'q')
         {
             return false;
         }
@@ -86,11 +90,12 @@ bool isKeysValid(char keys[], int size)
 
 void deduceAttack(char keys[], int &atkValue, int &atkPow)
 {
+    std::cout << std::toupper(keys[3]) << std::endl;
     if (keys[0] == 'a' && keys[1] == 'w' && keys[2] == 's' && (keys[3] == 'x' || keys[3] == 'd'))
     {
         atkValue = 1;
     }
-    else if (keys[0] == 's' && (keys[1] == 'x' || keys[1] == 'q') && keys[2] == 'q' && (keys[4] >= 97 && keys[4] <= 122))
+    else if (keys[0] == 's' && (keys[1] == 'x' || keys[1] == 'q') && keys[2] == 'q' && ((int)keys[3] >= 97 && (int)keys[3] <= 122))
     {
         atkValue = 2;
     }
@@ -98,7 +103,7 @@ void deduceAttack(char keys[], int &atkValue, int &atkPow)
     {
         atkValue = 3;
     }
-
+    
     if (atkValue == 1 || atkValue == 2)
     {
         std::cout << "Enter attack power for selected attack (0 - 10)" << std::endl;
@@ -125,7 +130,7 @@ void showAttack(int atkValue, int atkPow)
     };
 
     std::cout << std::endl;
-    std::cout << "Attack Type: " << attackTypeName[atkValue].c_str() << std::endl;
+    std::cout << "Attack Type: " << attackTypeName[atkValue - 1].c_str() << std::endl;
 
     for (int y = 0; y < atkPow + 1; y++)
     {
