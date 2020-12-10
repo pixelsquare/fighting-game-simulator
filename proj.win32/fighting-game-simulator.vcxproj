@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\fighting-game-control\main.cpp" />
+    <ClCompile Include="..\fighting-game-simulator\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0C9063A9-98D6-4821-AB82-671C609B67B9}</ProjectGuid>

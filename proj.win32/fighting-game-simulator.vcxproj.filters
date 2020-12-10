@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\fighting-game-control\main.cpp">
+    <ClCompile Include="..\fighting-game-simulator\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
