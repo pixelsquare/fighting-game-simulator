@@ -1,108 +1,150 @@
 #include <iostream>
-#include <conio.h>
-#include <string>
-#include <Windows.h>;
+#include <cctype>
+#include <cstdlib>
 
-using namespace std;
+#if _WIN32
+#include <Windows.h>
+#endif
 
-string fireballStr = "Powerful FIREBALL!";
-string windkickStr = "Spinning WINDKICK!";
-string blockStr = "Defensive Block.";
+#define ATTACK_TIME_MS (80)
 
-//char possibleAtck[] = { 'a', 'w', 's', 'x', 'd', 'x', 'q' };
+bool isKeysValid(char keys[], int size);
+void deduceAttack(char keys[], int &atkValue, int &atkPow);
+void showAttack(int atkValue, int atkPow);
 
-void PlayGame(char &input);
-void DeduceAttack(char input1, char input2, char input3, char input4, int &atckValue, int &atckPow);
-void ShowAttack(int atckValue, int atckPow);
+int main(int argc, char *argv[])
+{
+    char comboMove[4] = { 0 };
 
-int main() {
-	char repeatProgram = 'y';
-	do {
-		system("CLS");
-		//cout << "Welcome to Fighting Game Simulator 2013" << endl;
-		PlayGame(repeatProgram);
-	} while(repeatProgram == 'y');
+    while (true)
+    {
+#if _WIN32
+        system("cls");
+#else
+        system("clear");
+#endif
 
-	cout << "Thanks for playing!";
+        std::cout << "###############################" << std::endl;
+        std::cout << "Welcome to Fighting Game Simulator!" << std::endl;
+        std::cout << "###############################" << std::endl;
+        std::cout << std::endl;
 
-	getch();
-	return 0;
+        std::cout << "[Controls]" << std::endl;
+        std::cout << "   W, A, S, D, X, Q" << std::endl;
+        std::cout << std::endl;
+
+        int comboLen = sizeof(comboMove) / sizeof(comboMove[0]);
+
+        for (int i = 0; i < comboLen; i++)
+        {
+            std::cout << "Enter button " << i + 1 << std::endl;
+            std::cin >> comboMove[i];
+            comboMove[i] = std::tolower(comboMove[i]);
+        }
+
+        if (isKeysValid(comboMove, comboLen))
+        {
+            int attackValue = 0;
+            int attackPow = 0;
+
+            deduceAttack(comboMove, attackValue, attackPow);
+            showAttack(attackValue, attackPow);
+        }
+
+        char willComboAgain = ' ';
+        
+        do
+        {
+            std::cout << std::endl;
+            std::cout << "Do you want to combo attack again? (y/n)" << std::endl;
+            std::cin >> willComboAgain;
+        } 
+        while (willComboAgain != 'y' && willComboAgain != 'n');
+
+        if (willComboAgain == 'n')
+        {
+            break;
+        }
+    }
+
+    std::cout << std::endl;
+    std::cout << "Thanks for playing!" << std::endl;
+
+    return 0;
 }
 
-void PlayGame(char &input) {
-	char letter1, letter2, letter3, letter4, programInput;
-	int attackPower, attackValue;
+bool isKeysValid(char keys[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        char key = keys[i];
 
-	cout << "Enter first button" << endl;
-	cin >> letter1;
+        if (key != 'w' && key != 'a' && key != 's' && key != 'd' && key != 'x' && key != 'q')
+        {
+            return false;
+        }
+    }
 
-	cout << "Enter second button" << endl;
-	cin >> letter2;
-
-	cout << "Enter third button" << endl;
-	cin >> letter3;
-
-	cout << "Enter fourth button" << endl;
-	cin >> letter4;
-
-	DeduceAttack(letter1, letter2, letter3, letter4, attackValue, attackPower);
-	ShowAttack(attackValue, attackPower);
-
-	cout << "Do you want to combo attack again? (y/n)" << endl;
-	cin >> programInput;
-
-	input = programInput;
+    return true;
 }
 
-void DeduceAttack(char input1, char input2, char input3, char input4, int &atckValue, int &atckPow) {
-	int attackValue = 0;
+void deduceAttack(char keys[], int &atkValue, int &atkPow)
+{
+    std::cout << std::toupper(keys[3]) << std::endl;
+    if (keys[0] == 'a' && keys[1] == 'w' && keys[2] == 's' && (keys[3] == 'x' || keys[3] == 'd'))
+    {
+        atkValue = 1;
+    }
+    else if (keys[0] == 's' && (keys[1] == 'x' || keys[1] == 'q') && keys[2] == 'q' && ((int)keys[3] >= 97 && (int)keys[3] <= 122))
+    {
+        atkValue = 2;
+    }
+    else
+    {
+        atkValue = 3;
+    }
+    
+    if (atkValue == 1 || atkValue == 2)
+    {
+        std::cout << "Enter attack power for selected attack (0 - 10)" << std::endl;
+        std::cin >> atkPow;
 
-	if (input1 == 'a' && input2 == 'w' && input3 == 's' && (input4 == 'x' || input4 == 'd')) {
-		attackValue = 1;
-	}
-	else if(input1 == 's' && (input2 == 'x' || input2 == 'q') && input3 == 'q' && (input4 >= 97 && input4 <= 122)) {
-		attackValue = 2;
-	}
-	else
-		attackValue = 3;
-
-	int attackPower = 0;
-	if(attackValue == 1 || attackValue == 2) {
-		cout << endl << "Enter attack power for selected attack (0-10)" << endl;
-		cin >> attackPower;
-
-		if(attackPower < 0 || attackPower > 10)
-			attackPower = 0;
-	}
-	else
-		attackPower = 2;
-
-	atckValue = attackValue;
-	atckPow = attackPower;
+        if (atkPow < 0 || atkPow > 10)
+        {
+            atkPow = 0;
+        }
+    }
+    else
+    {
+        atkPow = 2;
+    }
 }
 
-void ShowAttack(int atckValue, int atckPow) {
+void showAttack(int atkValue, int atkPow)
+{
+    static const std::string attackTypeName[3] =
+    {
+        "Powerful FIREBALL",
+        "Spinning WINDKICK",
+        "Defensive Block"
+    };
 
-	switch(atckValue) {
-	case 1:
-		cout << endl << fireballStr << endl;
-		break;
+    std::cout << std::endl;
+    std::cout << "Attack Type: " << attackTypeName[atkValue - 1].c_str() << std::endl;
 
-	case 2:
-		cout << endl << windkickStr << endl;
-		break;
+    for (int y = 0; y < atkPow + 1; y++)
+    {
+        for (int x = 0; x < y; x++)
+        {
+            std::cout << "+";
+#if _WIN32
+            Sleep(ATTACK_TIME_MS);
+#endif
+        }
 
-	default:
-		cout << endl << blockStr << endl;
-	}
+        std::cout << std::endl;
+    }
 
-	for(int i = 0; i < atckPow + 1; i++) {
-		for(int j = 0; j < i; j++) {
-			cout << "+";
-		}
-		cout << endl;
-		Sleep(80);
-	}
-
-	cout << endl << "Chosen attack value is " << atckValue << " and attack power is " << atckPow << endl;
+    std::cout << std::endl;
+    std::cout << "Chosen Attack Value is " << atkValue << " and Attack Power is " << atkPow << std::endl;
 }
